@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.2043
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OAuth2Sharp", "OAuth2Sharp\OAuth2Sharp.csproj", "{A04FD751-C686-4A98-9FC3-FC8D3D69322D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OAuth2Sharp.Test", "OAuth2Sharp.Test\OAuth2Sharp.Test.csproj", "{5769FD43-5DA3-4198-815F-E8531362FF66}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{A04FD751-C686-4A98-9FC3-FC8D3D69322D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A04FD751-C686-4A98-9FC3-FC8D3D69322D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A04FD751-C686-4A98-9FC3-FC8D3D69322D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5769FD43-5DA3-4198-815F-E8531362FF66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5769FD43-5DA3-4198-815F-E8531362FF66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5769FD43-5DA3-4198-815F-E8531362FF66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5769FD43-5DA3-4198-815F-E8531362FF66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
