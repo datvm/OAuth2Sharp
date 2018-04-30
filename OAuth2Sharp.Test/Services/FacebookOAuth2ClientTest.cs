@@ -1,9 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.QualityTools.Testing.Fakes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using OAuth2Sharp.Services;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace OAuth2Sharp.Test.Services
 {
@@ -19,6 +23,7 @@ namespace OAuth2Sharp.Test.Services
         private OAuth2ClientConfig facebookClientConfig;
 
         private OAuth2ClientBuilder builder;
+
 
 
         [TestInitialize]
@@ -72,7 +77,16 @@ namespace OAuth2Sharp.Test.Services
         [TestMethod]
         public async Task RequestAccessTokenAsyncTest()
         {
+            using (ShimsContext.Create())
+            {
+                RestSharp.Fakes.ShimRestClient.AllInstances.ExecuteTaskAsyncIRestRequest = 
+                    Utils.FakeAccessTokenRequest;
 
+                var result = await this.client.RequestAccessTokenAsync(Utils.MockOAuthAccessCode);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(Utils.MockReturnedAccessToken, result.AccessToken);
+            }
         }
 
     }
