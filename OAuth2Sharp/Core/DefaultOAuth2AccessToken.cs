@@ -6,7 +6,7 @@ using System.Text;
 namespace OAuth2Sharp
 {
 
-    public class OAuth2AccessToken
+    public class DefaultOAuth2AccessToken
     {
 
         [JsonProperty("access_token")]

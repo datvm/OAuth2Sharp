@@ -1,7 +1,7 @@
 ﻿using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using OAuth2Sharp.Services;
+using OAuth2Sharp.Core;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,6 @@ namespace OAuth2Sharp.Test.Services
         private TestSettings settings;
         private TestSettings.OAuthConfigs.OAuthClientConfig facebookSettings;
         private OAuth2ClientConfig facebookClientConfig;
-
         private OAuth2ClientBuilder builder;
 
 
@@ -40,10 +39,12 @@ namespace OAuth2Sharp.Test.Services
         [TestMethod]
         public async Task CreateRequestUriAsyncTest1()
         {
-            var result = await this.client.CreateRequestUriAsync();
+            var result = await this.client.CreateAuthorizationUriAsync();
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(this.facebookClientConfig.AuthorizationEndpoint.Host, result.Host);
+
+            var authUri = new Uri(this.facebookClientConfig.AuthorizationEndpoint);
+            Assert.AreEqual(authUri.Host, result.Host);
 
             var parameters = result.ParseQueryString();
             Assert.AreEqual(this.facebookSettings.ClientId, parameters["client_id"]);
@@ -57,15 +58,17 @@ namespace OAuth2Sharp.Test.Services
             const string overrideRedirectUri = "https://www.example.com/";
             const string state = "123";
 
-            var result = await this.client.CreateRequestUriAsync(new OAuth2UriRequestOptions()
+            var result = await this.client.CreateAuthorizationUriAsync(config =>
             {
-                CustomParameters = new Dictionary<string, string>() { { "testParam", "123" } },
-                OverrideRedirectUri = new Uri(overrideRedirectUri),
-                State = state,
+                config.CustomValues.Add("testParam", "123");
+                config.CustomValues.Add("redirect_uri", overrideRedirectUri);
+                config.State = state;
             });
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(this.facebookClientConfig.AuthorizationEndpoint.Host, result.Host);
+
+            var authUri = new Uri(this.facebookClientConfig.AuthorizationEndpoint);
+            Assert.AreEqual(authUri.Host, result.Host);
 
             var parameters = result.ParseQueryString();
             Assert.AreEqual(this.facebookSettings.ClientId, parameters["client_id"]);

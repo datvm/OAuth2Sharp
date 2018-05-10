@@ -1,6 +1,9 @@
-﻿using RestSharp;
+﻿using OAuth2Sharp.Core;
+using OAuth2Sharp.Extensions;
+using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace OAuth2Sharp
@@ -21,7 +24,7 @@ namespace OAuth2Sharp
             if (!restResponse.IsSuccessful)
             {
                 throw new OAuth2Exception(
-                    $"Status code is not successful. Status Code: {(int) restResponse.StatusCode} ({restResponse.StatusDescription})",
+                    $"Status code is not successful. Status Code: {(int)restResponse.StatusCode} ({restResponse.StatusDescription})",
                     restResponse);
             }
         }
@@ -34,6 +37,52 @@ namespace OAuth2Sharp
             }
 
             return request;
+        }
+
+        public static Dictionary<string, PropertyInfo> GetTypeProperties(Type type)
+        {
+            var result = new Dictionary<string, PropertyInfo>();
+
+            var properties = type.GetProperties();
+            foreach (var property in properties)
+            {
+                result.Add(property.Name, property);
+            }
+
+            return result;
+        }
+
+        public static TOption ExecuteOptions<TOption>(this Action<TOption> options) where TOption : new()
+        {
+            var result = new TOption();
+            options(result);
+
+            return result;
+        }
+
+        public static OverrideQueryParameterRestRequest AddQueryParameterWithOverride(this IRestRequest request, Dictionary<string, string> overrideValues)
+        {
+            return new OverrideQueryParameterRestRequest(request, overrideValues);
+        }
+
+        public static void CopyProperties<TTarget>(object source, TTarget target)
+        {
+            var sourceProperties = GetTypeProperties(source.GetType());
+            CopyProperties(sourceProperties, source, target);
+        }
+
+        public static void CopyProperties(Dictionary<string, PropertyInfo> sourceProperties, object source, object target)
+        {
+            var clientProperties = target.GetType().GetProperties();
+
+            foreach (var clientProperty in clientProperties)
+            {
+                if (sourceProperties.TryGetValue(clientProperty.Name, out var sourceProperty))
+                {
+                    var value = sourceProperty.GetValue(source);
+                    clientProperty.SetValue(target, value);
+                }
+            }
         }
 
     }

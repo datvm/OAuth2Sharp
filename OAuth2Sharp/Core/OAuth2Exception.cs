@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace OAuth2Sharp
+namespace OAuth2Sharp.Core
 {
     public class OAuth2Exception : Exception
     {

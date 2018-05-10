@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using OAuth2Sharp.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,7 +43,7 @@ namespace OAuth2Sharp.Test
                     {
                         ClientId = this.ClientId,
                         ClientSecret = this.ClientSecret,
-                        RedirectUri = new Uri(this.RedirectUri),
+                        RedirectUri = this.RedirectUri,
                     };
                 }
 
