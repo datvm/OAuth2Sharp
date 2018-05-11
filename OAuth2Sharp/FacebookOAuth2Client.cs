@@ -63,7 +63,7 @@ namespace OAuth2Sharp
     }
 
     // TODO: Fill FacebookGraphUserInfo with User object from https://developers.facebook.com/docs/graph-api/reference/user
-    public class FacebookUserInfo
+    public class FacebookUserInfo : IOAuth2UserInfo
     {
         [JsonProperty("id")]
         public string Id { get; set; }
@@ -95,8 +95,12 @@ namespace OAuth2Sharp
 
     }
 
-    public class FacebookOAuth2ClientOperationOptions : DefaultOAuth2ClientOperationOptions { }
+    public class FacebookOAuth2ClientOperationOptions : DefaultOAuth2ClientOperationOptions
+    {
+    }
 
-    public class FacebookOAuth2ClientCreateAuthorizationUriOption : DefaultOAuth2ClientCreateAuthorizationUriOption { }
+    public class FacebookOAuth2ClientCreateAuthorizationUriOption : DefaultOAuth2ClientCreateAuthorizationUriOption
+    {
+    }
 
 }

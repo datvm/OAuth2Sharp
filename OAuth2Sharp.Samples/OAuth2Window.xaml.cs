@@ -54,5 +54,14 @@ namespace OAuth2Sharp.Samples
         {
             this.webBrowser.Navigate(this.StartingUri);
         }
+
+        private void Window_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (MainWindow.IsWaitingToClearCache)
+            {
+                WinInetHelper.EndBrowserSession();
+                MainWindow.IsWaitingToClearCache = false;
+            }
+        }
     }
 }

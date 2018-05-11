@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace OAuth2Sharp.Core
 {
     public class DefaultOAuth2UserInfoClient<TToken, TRefreshToken, TUserInfo> : DefaultOAuth2RefreshTokenClient<TToken, TRefreshToken>, IOAuth2UserInfoClient<TToken, TUserInfo>
+        where TUserInfo : IOAuth2UserInfo, new()
     {
 
         public string UserInfoEndpoint { get; set; }

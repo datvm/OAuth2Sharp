@@ -58,6 +58,7 @@ namespace OAuth2Sharp.Core
     }
 
     public interface IOAuth2UserInfoClient<TToken, TUserInfo> : IOAuth2Client<TToken>
+        where TUserInfo: IOAuth2UserInfo, new()
     {
 
         string UserInfoEndpoint { get; set; }

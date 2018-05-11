@@ -23,6 +23,8 @@ namespace OAuth2Sharp.Samples
     public partial class MainWindow : Window
     {
 
+        public static bool IsWaitingToClearCache { get; set; }
+
         public static readonly string[] Services = {
             "Facebook",
         };
@@ -76,7 +78,19 @@ namespace OAuth2Sharp.Samples
             Settings.Default.Save();
         }
 
-        private async void btnStartFlow_Click(object sender, RoutedEventArgs e)
+        private async void ClearCookie(object sender, RoutedEventArgs e)
+        {
+            WinInetHelper.SupressCookiePersist();
+            IsWaitingToClearCache = true;
+            await StartFlow();
+        }
+
+        private async void StartFlow(object sender, RoutedEventArgs e)
+        {
+            await StartFlow();
+        }
+
+        private async Task StartFlow()
         {
             var settings = this.GetSettingsFromUi();
             SaveSettings(settings);
@@ -108,7 +122,7 @@ namespace OAuth2Sharp.Samples
             {
                 return;
             }
-
+            
             var returnedUri = f.ReturnedUri;
             this.PrintOutput("Redirect Uri: " + returnedUri.AbsoluteUri);
 
@@ -164,6 +178,7 @@ namespace OAuth2Sharp.Samples
                 Service = this.lstServices.SelectedItem as string,
             };
         }
+
 
     }
 }

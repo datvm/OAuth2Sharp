@@ -66,6 +66,7 @@
     </Compile>
     <Compile Include="SampleSettings.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="WinInetHelper.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

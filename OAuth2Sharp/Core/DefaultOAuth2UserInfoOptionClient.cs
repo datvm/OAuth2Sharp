@@ -10,6 +10,7 @@ namespace OAuth2Sharp.Core
         DefaultOAuth2UserInfoClient<TToken, TRefreshToken, TUserInfo>
         where TCreateAuthorizationUriOptions: DefaultOAuth2ClientCreateAuthorizationUriOption, new()
         where TOperationOptions : DefaultOAuth2ClientOperationOptions, new()
+        where TUserInfo : IOAuth2UserInfo, new()
     {
         public DefaultOAuth2UserInfoOptionClient(Func<OAuth2ClientConfig> clientConfig, Func<OAuth2ClientBuilder> clientBuilder) : base(clientConfig, clientBuilder)
         {
