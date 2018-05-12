@@ -2,6 +2,7 @@
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,9 +35,13 @@ namespace OAuth2Sharp.Core
             this.ClientConfig.CopyToClient(this);
             this.ClientBuilder.CopyToClient(this);
 
+            this.Initialize();
+
             this.RestClient = new RestClient(
                 new Uri(this.TokenEndpoint).GetLeftPart(UriPartial.Authority));
         }
+
+        protected virtual void Initialize() { }
 
         public DefaultOAuth2Client(OAuth2ClientConfig clientConfig, OAuth2ClientBuilder clientBuilder)
             : this(() => clientConfig, () => clientBuilder) { }
@@ -73,6 +78,7 @@ namespace OAuth2Sharp.Core
         {
             var response = await this.RestClient.ExecuteTaskAsync(request);
 
+            Trace.WriteLine(response.Content);
             response.EnsureSuccessful();
 
             return JsonConvert.DeserializeObject<T>(response.Content);
@@ -104,11 +110,12 @@ namespace OAuth2Sharp.Core
 
             request
                 .AddQueryParameterWithOverride(options.CustomValues)
-                .AddQueryParameter("client_id", this.ClientId)
-                .AddQueryParameter("client_secret", this.ClientSecret)
-                .AddQueryParameter("grant_type", "authorization_code")
-                .AddQueryParameter("code", code)
-                .AddQueryParameter("redirect_uri", this.RedirectUri)
+                .AddBodyFormUrlEncoded("client_id", this.ClientId)
+                .AddBodyFormUrlEncoded("client_secret", this.ClientSecret)
+                .AddBodyFormUrlEncoded("grant_type", "authorization_code")
+                .AddBodyFormUrlEncoded("code", code)
+                .AddBodyFormUrlEncoded("redirect_uri", this.RedirectUri)
+                .AddPostFormUrlEncodedHeader()
                 .AddRemainingParameters();
 
             return request;

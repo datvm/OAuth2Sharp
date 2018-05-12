@@ -85,6 +85,14 @@ namespace OAuth2Sharp
             }
         }
 
+        public static void AddIfNotExist<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue value)
+        {
+            if (!dict.ContainsKey(key))
+            {
+                dict.Add(key, value);
+            }
+        }
+
     }
 
 }

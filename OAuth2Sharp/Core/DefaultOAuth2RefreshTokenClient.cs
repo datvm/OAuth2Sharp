@@ -26,10 +26,11 @@ namespace OAuth2Sharp.Core
 
             request
                 .AddQueryParameterWithOverride(options.CustomValues)
-                .AddQueryParameter("client_id", this.ClientId)
-                .AddQueryParameter("client_secret", this.ClientSecret)
-                .AddQueryParameter("refresh_token", refreshToken)
-                .AddQueryParameter("grant_type", "refresh_token")
+                .AddBodyFormUrlEncoded("client_id", this.ClientId)
+                .AddBodyFormUrlEncoded("client_secret", this.ClientSecret)
+                .AddBodyFormUrlEncoded("refresh_token", refreshToken)
+                .AddBodyFormUrlEncoded("grant_type", "refresh_token")
+                .AddPostFormUrlEncodedHeader()
                 .AddRemainingParameters();
 
             return request;

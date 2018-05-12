@@ -35,6 +35,21 @@ namespace OAuth2Sharp.Extensions
             return this;
         }
 
+        public OverrideQueryParameterRestRequest AddBodyFormUrlEncoded(string name, string value)
+        {
+            if (this.overrideValues.TryGetValue(name, out var overrideValue))
+            {
+                this.RestRequest.AddParameter(name, overrideValue, ParameterType.GetOrPost);
+            }
+            else
+            {
+                this.RestRequest.AddParameter(name, value, ParameterType.GetOrPost);
+            }
+            addedValues.Add(name);
+
+            return this;
+        }
+
         public OverrideQueryParameterRestRequest AddHeader(string name, string value)
         {
             if (this.overrideValues.TryGetValue(name, out var overrideValue))
@@ -47,6 +62,13 @@ namespace OAuth2Sharp.Extensions
             }
             addedValues.Add(name);
 
+            return this;
+        }
+
+        public OverrideQueryParameterRestRequest AddPostFormUrlEncodedHeader()
+        {
+            this.RestRequest.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+                
             return this;
         }
 

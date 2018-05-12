@@ -15,5 +15,12 @@ namespace OAuth2Sharp
             UserInfoEndpoint = "https://graph.facebook.com/me",
         };
 
+        public static readonly OAuth2ClientConfig Microsoft = new OAuth2ClientConfig()
+        {
+            AuthorizationEndpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+            TokenEndpoint = "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+            UserInfoEndpoint = "https://graph.microsoft.com/v1.0/me",
+        };
+
     }
 }

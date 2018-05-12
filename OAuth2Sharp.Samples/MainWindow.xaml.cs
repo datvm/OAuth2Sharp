@@ -26,7 +26,7 @@ namespace OAuth2Sharp.Samples
         public static bool IsWaitingToClearCache { get; set; }
 
         public static readonly string[] Services = {
-            "Facebook",
+            "Facebook", "Microsoft",
         };
 
         public MainWindow()
@@ -92,20 +92,96 @@ namespace OAuth2Sharp.Samples
 
         private async Task StartFlow()
         {
-            var settings = this.GetSettingsFromUi();
-            SaveSettings(settings);
-
-            this.txtResult.Text = "";
-
-            switch (settings.Service)
+            try
             {
-                case "Facebook":
-                    await this.StartFacebookFlow(settings);
-                    break;
-                default:
-                    MessageBox.Show("Unknown service.", this.Title, MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
+                var settings = this.GetSettingsFromUi();
+                SaveSettings(settings);
+
+                this.txtResult.Text = "";
+
+                switch (settings.Service)
+                {
+                    case "Facebook":
+                        await this.StartFacebookFlow(settings);
+                        break;
+                    case "Microsoft":
+                        await this.StartMicrosoftAsync(settings);
+                        break;
+                    default:
+                        MessageBox.Show("Unknown service.", this.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                }
             }
+            catch (AggregateException ex)
+            {
+                this.PrintOutput(ex.InnerException.ToString());
+            }
+            catch (Exception ex)
+            {
+                this.PrintOutput(ex.ToString());
+            }
+            
+        }
+
+        private async Task StartMicrosoftAsync(SampleSettings settings)
+        {
+            var client = new MicrosoftOAuth2Client(settings.ToOAuth2ClientBuilder());
+
+            var options = new MicrosoftOAuth2ClientCreateAuthorizationUriOption();
+
+            options.Scope.Add("openid");
+            options.Scope.Add("email");
+            options.Scope.Add("profile");
+            options.Scope.Add("offline_access");
+            options.Scope.Add("user.read");
+
+            options.ResponseType = MicrosoftOperationResponseType.IdTokenAndCode;
+
+            var requestUri = await client.CreateAuthorizationUriAsync(options);
+
+            var f = new OAuth2Window(requestUri.AbsoluteUri, settings.RedirectUri);
+            if (f.ShowDialog() != true)
+            {
+                return;
+            }
+
+            // Change the # into ?
+            var returnedUri = new Uri(f.ReturnedUri.AbsoluteUri.Replace("#", "?"));
+
+            this.PrintOutput("Redirect Uri: " + returnedUri.AbsoluteUri);
+
+            var parameters = returnedUri.ParseQueryString();
+
+            var state = parameters["state"];
+            if (state != options.State)
+            {
+                this.PrintOutput("WARNING: State is not returned or does not match");
+            }
+
+            var error = parameters["error"];
+            if (!string.IsNullOrEmpty(error))
+            {
+                this.PrintOutput("Error returned: " + error);
+                return;
+            }
+
+            var code = parameters["code"];
+            if (string.IsNullOrEmpty(code))
+            {
+                this.PrintOutput("No code in the returned uri.");
+                return;
+            }
+
+            var authToken = await client.RequestAccessTokenAsync(code);
+            this.PrintOutput($"Access Token: {authToken.AccessToken}; Refresh Token: {authToken.RefreshToken}");
+
+            var accessToken = await client.RefreshAccessTokenAsync(authToken.RefreshToken);
+            this.PrintOutput($"Access Token: {accessToken.AccessToken}");
+
+            var userInfo = await client.GetUserInfoAsync(accessToken.AccessToken);
+            this.PrintOutput("User Info: " + Environment.NewLine + JsonConvert.SerializeObject(userInfo));
+
+            this.PrintOutput("Done!");
         }
 
         private async Task StartFacebookFlow(SampleSettings settings)
@@ -122,7 +198,7 @@ namespace OAuth2Sharp.Samples
             {
                 return;
             }
-            
+
             var returnedUri = f.ReturnedUri;
             this.PrintOutput("Redirect Uri: " + returnedUri.AbsoluteUri);
 
